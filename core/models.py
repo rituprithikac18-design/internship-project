@@ -14,7 +14,7 @@ class Client(models.Model):
     company_name = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     site = models.CharField(max_length=100)
-
+    company_logo=models.ImageField( upload_to='logos/',blank=True,null=True)
     def __str__(self):
         return f"{self.company_name} - {self.city} - {self.site}"
 

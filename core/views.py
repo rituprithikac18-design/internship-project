@@ -58,7 +58,8 @@ def add_client(request):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         company_name = request.POST.get('company_name')
-
+        city=request.POST.get("city")
+        site=request.POST.get("site")
         if password != confirm_password:
             return render(request, 'core/add_client.html', {
                 'error': 'Passwords do not match.'
@@ -84,7 +85,7 @@ def add_client(request):
                 first_name=first_name,
                 last_name=last_name
             )
-            Client.objects.create(user=user, company_name=company_name)
+            Client.objects.create(user=user, company_name=company_name, city=city, site=site)
             return redirect('list_clients')
 
         except Exception as e:
