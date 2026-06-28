@@ -23,7 +23,7 @@
     </div>
     {% endif %}
 
-    <form method="post" class="space-y-6">
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
       {% csrf_token %}
 
       <!-- User Information Section -->
@@ -128,7 +128,27 @@
         class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
         placeholder="Enter site name">
     </div>
+    <div class="mt-4">
+      <label for="company_logo"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Company Logo
+      </label>
 
+      <input
+          type="file"
+          name="company_logo"
+          id="company_logo"
+          accept="image/*"
+          class="block w-full text-sm text-gray-900 dark:text-white
+                file:mr-4
+                file:py-2
+                file:px-4
+                file:rounded-lg
+                file:border-0
+                file:bg-blue-600
+                file:text-white
+                hover:file:bg-blue-700">
+      </div>
   </div>
 </div>
 
