@@ -29,6 +29,9 @@
         </div>
         <div>
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ client.company_name }}</h3>
+          {% if client.city %}
+          <p class=""text-sm text-gray-500 dark:text-gray-400">City: {{ client.city }}</p>
+          {% endif %}
           {% if client.site %}
           <p class="text-sm text-gray-500 dark:text-gray-400">Site: {{ client.site }}</p>
           {% endif %}
