@@ -12,12 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------------------------------------------------------
 # SECURITY
 # -----------------------------------------------------------------------------
+SECRET_KEY = os.getenv("SECRET_KEY", "ljn+6#sb*=q&7j36@%qq7(g)7z6yoy!de$spa%vz4u75(932^0")
 
-SECRET_KEY = os.getenv(
-    "ljn+6#sb*=q&7j36@%qq7(g)7z6yoy!de$spa%vz4u75(932^0"
-)
 
-DEBUG = os.getenv("DEBUG", "FALSE").lower() == "false"
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 # -----------------------------------------------------------------------------
 # ALLOWED HOSTS
@@ -91,6 +89,7 @@ WSGI_APPLICATION = "smart_signal_main.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=0,
         conn_health_checks=True,
     )
@@ -146,7 +145,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
