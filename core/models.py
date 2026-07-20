@@ -26,3 +26,24 @@ class Video(models.Model):
 
     def __str__(self):
         return f"{self.client.company_name} - {self.site}"
+
+class Signal(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    site = models.CharField(max_length=255)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    status = models.CharField(max_length=50, choices=[('active', 'Active'), ('inactive', 'Inactive'), ('maintenance', 'Maintenance')], default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.site} ({self.client.company_name})"
+
+class Alert(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    signal = models.ForeignKey(Signal, on_delete=models.SET_NULL, null=True, blank=True)
+    message = models.TextField()
+    resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Alert for {self.client.company_name} - Resolved: {self.resolved}"

@@ -19,6 +19,7 @@
 </div>
 
 <!-- Filter Form -->
+{% if is_admin %}
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
   <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Videos</h2>
   <form method="post" class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -53,6 +54,7 @@
     </div>
   </form>
 </div>
+{% endif %}
 
 <!-- Video Results -->
 {% if videos %}
@@ -89,7 +91,7 @@
   Showing {{ videos|length }} video{% if videos|length != 1 %}s{% endif %}
 </div>
 
-{% elif request.method == 'POST' %}
+{% elif is_admin and request.method == 'POST' %}
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
   <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +102,7 @@
   <p class="text-gray-500 dark:text-gray-400">No videos match the selected filters. Try different criteria.</p>
 </div>
 
-{% else %}
+{% elif is_admin %}
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
   <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
     <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,6 +111,17 @@
   </div>
   <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Select filters to view videos</h3>
   <p class="text-gray-500 dark:text-gray-400">Use the filter form above to search for videos by client and site.</p>
+</div>
+
+{% else %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+  <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+    </svg>
+  </div>
+  <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No videos uploaded</h3>
+  <p class="text-gray-500 dark:text-gray-400">You haven't uploaded any videos yet.</p>
 </div>
 {% endif %}
 {% endblock %}

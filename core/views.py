@@ -22,7 +22,7 @@ from .forms import (
     VideoFilterForm,
     VideoUploadForm,
 )
-from .models import Client, Video
+from .models import Client, Video, Signal, Alert
 from .utils import delete_s3_client_data, list_videos_from_s3
 
 User = get_user_model()
@@ -48,6 +48,7 @@ def home(request):
 
 # Client Management
 @login_required
+@user_passes_test(lambda u: u.is_staff or u.is_superuser or getattr(u, 'is_admin', False), login_url='/')
 @transaction.atomic
 def add_client(request):
     if request.method == 'POST':
@@ -97,6 +98,7 @@ def add_client(request):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_staff or u.is_superuser or getattr(u, 'is_admin', False), login_url='/')
 def list_clients(request):
     clients = Client.objects.all()
     return render(request, 'core/list_clients.html', {'clients': clients})
@@ -104,6 +106,7 @@ def list_clients(request):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_staff or u.is_superuser or getattr(u, 'is_admin', False), login_url='/')
 def delete_client(request, client_id):
     client = get_object_or_404(Client, id=client_id)
 
@@ -125,30 +128,48 @@ def show_map(request):
 # Video Upload
 @login_required
 def upload_video(request):
+    is_admin = request.user.is_staff or request.user.is_superuser or getattr(request.user, 'is_admin', False)
+    
     if request.method == 'POST':
-        form = VideoUploadForm(request.POST, request.FILES)
+        form = AdminUploadVideoForm(request.POST, request.FILES) if is_admin else VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            video = form.save(commit=False)
+            if not is_admin:
+                try:
+                    video.client = request.user.client
+                except Client.DoesNotExist:
+                    return redirect('home')
+            video.save()
             return redirect('list_videos')
     else:
-        form = VideoUploadForm()
+        form = AdminUploadVideoForm() if is_admin else VideoUploadForm()
 
-    return render(request, 'core/upload_video.html', {'form': form})
+    return render(request, 'core/upload_video.html', {'form': form, 'is_admin': is_admin})
 
 
 @login_required
 def list_videos(request):
+    is_admin = request.user.is_staff or request.user.is_superuser or getattr(request.user, 'is_admin', False)
     videos = None
-    if request.method == 'POST':
-        form = VideoFilterForm(request.POST)
-        if form.is_valid():
-            client = form.cleaned_data['client']
-            site = form.cleaned_data['site_name']  # site_name from form, field in model is site
-            videos = Video.objects.filter(client=client, site=site)
+    form = None
+    
+    if is_admin:
+        if request.method == 'POST':
+            form = VideoFilterForm(request.POST)
+            if form.is_valid():
+                client = form.cleaned_data['client']
+                site = form.cleaned_data['site_name']  # site_name from form, field in model is site
+                videos = Video.objects.filter(client=client, site=site)
+        else:
+            form = VideoFilterForm()
     else:
-        form = VideoFilterForm()
+        try:
+            client = request.user.client
+            videos = Video.objects.filter(client=client)
+        except Client.DoesNotExist:
+            videos = []
 
-    return render(request, 'core/list_videos.html', {'form': form, 'videos': videos})
+    return render(request, 'core/list_videos.html', {'form': form, 'videos': videos, 'is_admin': is_admin})
 
 # AWS S3: Show all signals
 import re
@@ -211,19 +232,34 @@ def client_required(view_func):
 
 
 
-from django.shortcuts import render
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import Client, Video
-
 @login_required
 def dashboard_view(request):
+    is_admin = request.user.is_staff or request.user.is_superuser or getattr(request.user, 'is_admin', False)
+    
+    if is_admin:
+        total_clients = Client.objects.count()
+        total_videos = Video.objects.count()
+        active_signals = Signal.objects.filter(status='active').count()
+        alert_count = Alert.objects.filter(resolved=False).count()
+    else:
+        try:
+            client = request.user.client
+            total_clients = 1
+            total_videos = Video.objects.filter(client=client).count()
+            active_signals = Signal.objects.filter(client=client, status='active').count()
+            alert_count = Alert.objects.filter(client=client, resolved=False).count()
+        except Client.DoesNotExist:
+            total_clients = 0
+            total_videos = 0
+            active_signals = 0
+            alert_count = 0
+
     context = {
-        'total_clients': Client.objects.count(),
-        'total_videos': Video.objects.count(),
-        'active_signals': 0,  # placeholder until Signal model exists
-        'alert_count': 0      # placeholder until Alert model exists
+        'total_clients': total_clients,
+        'total_videos': total_videos,
+        'active_signals': active_signals,
+        'alert_count': alert_count,
+        'is_admin': is_admin
     }
     return render(request, 'home.html', context)
 

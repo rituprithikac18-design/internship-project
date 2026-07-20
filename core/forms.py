@@ -71,4 +71,4 @@ class VideoFilterForm(forms.Form):
 class VideoUploadForm(forms.ModelForm):
     class Meta:
         model = Video
-        fields = ['client', 'site', 'video']
+        fields = ['site', 'video']

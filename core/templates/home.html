@@ -18,6 +18,7 @@
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
   <!-- Clients Card -->
+  {% if is_admin %}
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition">
     <div class="flex items-center justify-between">
       <div>
@@ -35,6 +36,7 @@
       <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </a>
   </div>
+  {% endif %}
 
   <!-- Videos Card -->
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition">
@@ -97,6 +99,7 @@
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
   <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {% if is_admin %}
     <a href="{% url 'add_client' %}" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition group">
       <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mb-3 group-hover:scale-110 transition">
         <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,6 +108,7 @@
       </div>
       <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Client</span>
     </a>
+    {% endif %}
 
     <a href="{% url 'upload_video' %}" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition group">
       <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg mb-3 group-hover:scale-110 transition">
