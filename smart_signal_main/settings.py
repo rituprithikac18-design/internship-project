@@ -14,11 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------------------------------------------------------
 
 SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    "django-insecure-demo-key-change-in-production"
+    "ljn+6#sb*=q&7j36@%qq7(g)7z6yoy!de$spa%vz4u75(932^0"
 )
 
-DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+DEBUG = os.getenv("DEBUG", "FALSE").lower() == "false"
 
 # -----------------------------------------------------------------------------
 # ALLOWED HOSTS
